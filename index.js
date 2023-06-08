@@ -54,9 +54,12 @@ async function run() {
 
 
 
+
+
         // verify admin 
         const verifyAdmin = async (req, res, next) => {
             const email = req.decoded.email;
+            console.log(email)
             const query = { email: email }
             const user = await usersCollection.findOne(query);
             if (user?.role !== 'admin') {
@@ -66,7 +69,15 @@ async function run() {
         }
 
         // verify instructors
-
+        // const verifyInstructors = async (req, res, next) => {
+        //     const email = req.decoded.email;
+        //     const query = { email: email }
+        //     const user = await usersCollection.findOne(query);
+        //     if (user?.role !== 'admin') {
+        //         return res.status(403).send({ error: true, message: 'forbidden message' });
+        //     }
+        //     next();
+        // }
 
 
 
@@ -76,6 +87,7 @@ async function run() {
         const classCollection = client.db("summerDB").collection("classes");
         const instructorCollection = client.db("summerDB").collection("instructors");
         const usersCollection = client.db("summerDB").collection("users");
+        const cartCollection = client.db("summerDB").collection("carts");
 
 
 
@@ -118,7 +130,24 @@ async function run() {
         })
 
 
+
+
         // Admin 
+        // app.get('/users/admin/:email', async (req, res) => {
+        //     const email = req.params.email;
+
+        //     if (req.decoded.email !== email) {
+        //         res.send({ admin: false })
+        //     }
+
+        //     const query = { email: email }
+        //     const user = await usersCollection.findOne(query);
+        //     const result = { admin: user?.role === 'admin' }
+        //     res.send(result);
+        // })
+
+
+
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id);
@@ -132,6 +161,57 @@ async function run() {
             res.send(result);
         })
 
+
+        // instructors
+        // app.get('/users/instructor/:email', async (req, res) => {
+        //     const email = req.params.email;
+
+        //     if (req.decoded.email !== email) {
+        //         res.send({ instructor: false })
+        //     }
+
+        //     const query = { email: email }
+        //     const user = await usersCollection.findOne(query);
+        //     const result = { admin: user?.role === 'instructor' }
+        //     res.send(result);
+        // })
+
+
+        // app.patch('/users/instructor/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     console.log(id);
+        //     const filter = { _id: new ObjectId(id) };
+        //     const updateDoc = {
+        //         $set: {
+        //             role: 'instructor'
+        //         },
+        //     };
+        //     const result = await usersCollection.updateOne(filter, updateDoc);
+        //     res.send(result);
+        // })
+
+
+
+        // cart Api 
+        app.get('/carts', async (req, res) => {
+            const result = await cartCollection.find().toArray();
+            res.send(result)
+        })
+
+
+        app.post('/carts', async (req, res) => {
+            const item = req.body;
+            console.log(item);
+            const result = await cartCollection.insertOne(item);
+            res.send(result);
+        })
+
+        app.delete('/carts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await cartCollection.deleteOne(query);
+            res.send(result);
+        })
 
 
 
