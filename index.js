@@ -104,7 +104,7 @@ async function run() {
         const instructorCollection = client.db("summerDB").collection("instructors");
         const usersCollection = client.db("summerDB").collection("users");
         const cartCollection = client.db("summerDB").collection("carts");
-        const paymentCollection = client.db("bistrodb").collection("payments");
+        const paymentCollection = client.db("summerDB").collection("payments");
 
 
 
@@ -217,7 +217,7 @@ async function run() {
         // cart Api 
         app.get('/carts', verifyJWT, async (req, res) => {
             const email = req.query.email;
-            // console.log(email)
+            console.log(email)
             if (!email) {
                 return res.send([]);
             }
@@ -283,6 +283,11 @@ async function run() {
             const deleteResult = await cartCollection.deleteMany(query)
 
             res.send({ insertResult, deleteResult });
+        })
+
+        app.get('/payments', async (req, res) => {
+            const result = await paymentCollection.find().toArray();
+            res.send(result)
         })
 
 
