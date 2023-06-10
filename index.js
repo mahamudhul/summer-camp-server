@@ -116,6 +116,16 @@ async function run() {
             res.send(result)
         })
 
+        // get instructor add data
+        app.get('/classes/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email:email }
+            const result = await classCollection.find(query).toArray()
+      
+            console.log(result)
+            res.send(result)
+          })
+
         app.post('/classes', async (req, res) => {
             const item = req.body;
             console.log(item);
