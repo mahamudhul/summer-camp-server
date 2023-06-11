@@ -125,7 +125,7 @@ async function run() {
         })
 
         // get instructor add data
-        app.get('/classes/:email',verifyJWT, verifyInstructors, async (req, res) => {
+        app.get('/classes/:email', verifyJWT, verifyInstructors, async (req, res) => {
             const email = req.params.email;
             const query = { email: email }
             const result = await classCollection.find(query).toArray()
@@ -139,6 +139,19 @@ async function run() {
             console.log(item);
             const result = await classCollection.insertOne(item);
             res.send(result);
+        })
+
+        app.patch("/classes/:id", async (req, res) => {
+            const id = req.params.id
+            const updateClassData = req.body
+            const filter = { _id: new ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    ...updateClassData
+                }
+            }
+            const result = await classCollection.updateOne(filter, updateDoc)
+            res.send(result)
         })
 
 
