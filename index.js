@@ -98,15 +98,15 @@ async function run() {
 
 
         // verify instructors
-        // const verifyInstructors = async (req, res, next) => {
-        //     const email = req.decoded.email;
-        //     const query = { email: email }
-        //     const user = await usersCollection.findOne(query);
-        //     if (user?.role !== 'admin') {
-        //         return res.status(403).send({ error: true, message: 'forbidden message' });
-        //     }
-        //     next();
-        // }
+        const verifyInstructors = async (req, res, next) => {
+            const email = req.decoded.email;
+            const query = { email: email }
+            const user = await usersCollection.findOne(query);
+            if (user?.role !== 'instructor') {
+                return res.status(403).send({ error: true, message: 'forbidden message' });
+            }
+            next();
+        }
 
 
 
@@ -125,7 +125,7 @@ async function run() {
         })
 
         // get instructor add data
-        app.get('/classes/:email', async (req, res) => {
+        app.get('/classes/:email',verifyJWT, verifyInstructors, async (req, res) => {
             const email = req.params.email;
             const query = { email: email }
             const result = await classCollection.find(query).toArray()
