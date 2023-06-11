@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const morgan = require('morgan')
+// const morgan = require('morgan')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 require('dotenv').config()
@@ -16,7 +16,7 @@ const port = process.env.PORT || 5000;
 // middleware
 app.use(cors());
 app.use(express.json())
-app.use(morgan('dev'))
+// app.use(morgan('dev'))
 
 
 
@@ -64,6 +64,16 @@ async function run() {
 
 
 
+        // all API collection
+        const classCollection = client.db("summerDB").collection("classes");
+        const instructorCollection = client.db("summerDB").collection("instructors");
+        const usersCollection = client.db("summerDB").collection("users");
+        const cartCollection = client.db("summerDB").collection("carts");
+        const paymentCollection = client.db("summerDB").collection("payments");
+
+
+
+
 
         // JWT
         app.post('/jwt', (req, res) => {
@@ -102,12 +112,7 @@ async function run() {
 
 
 
-        // all API collection
-        const classCollection = client.db("summerDB").collection("classes");
-        const instructorCollection = client.db("summerDB").collection("instructors");
-        const usersCollection = client.db("summerDB").collection("users");
-        const cartCollection = client.db("summerDB").collection("carts");
-        const paymentCollection = client.db("summerDB").collection("payments");
+
 
 
 
@@ -151,7 +156,7 @@ async function run() {
 
 
         // Users API
-        app.get('/users', verifyJWT, async (req, res) => {
+        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
             const result = await usersCollection.find().toArray();
             res.send(result);
         });
