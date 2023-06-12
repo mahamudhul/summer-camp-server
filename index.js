@@ -59,7 +59,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
 
 
@@ -84,7 +84,7 @@ async function run() {
         })
 
 
-        // verify admin 
+        // verify admin
         const verifyAdmin = async (req, res, next) => {
             const email = req.decoded.email;
             console.log(email)
@@ -324,9 +324,10 @@ async function run() {
         app.post('/payments', verifyJWT, async (req, res) => {
             const payment = req.body;
             console.log(payment)
-            const insertResult = await paymentCollection.insertOne(payment)
+            const{_id,...rest} = payment;
+            const insertResult = await paymentCollection.insertOne(rest)
 
-            const query = { _id: { $in: (new ObjectId(payment)) } }
+            const query = { _id:  (new ObjectId(_id)) } 
 
             // delete all payment classes
             const deleteResult = await cartCollection.deleteOne(query)
@@ -348,7 +349,7 @@ async function run() {
 
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+         client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
