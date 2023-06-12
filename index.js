@@ -288,7 +288,7 @@ async function run() {
 
         app.get("/carts/:id", async (req, res) => {
             const id = req.params.id
-            console.log(id)
+            // console.log(id)
             const filter = { _id: new ObjectId(id) }
             const data = await cartCollection.findOne(filter)
             res.send(data)
@@ -319,15 +319,17 @@ async function run() {
 
 
 
+
         // payment related api
         app.post('/payments', verifyJWT, async (req, res) => {
             const payment = req.body;
+            console.log(payment)
             const insertResult = await paymentCollection.insertOne(payment)
 
-            const query = { _id: { $in: payment.cartItems.map(id => new ObjectId(id)) } }
+            const query = { _id: { $in: (new ObjectId(payment)) } }
 
             // delete all payment classes
-            const deleteResult = await cartCollection.deleteMany(query)
+            const deleteResult = await cartCollection.deleteOne(query)
 
             res.send({ insertResult, deleteResult });
         })
