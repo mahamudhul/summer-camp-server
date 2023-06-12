@@ -255,7 +255,7 @@ async function run() {
         // cart Api 
         app.get('/carts', verifyJWT, async (req, res) => {
             const email = req.query.email;
-            console.log(email)
+            // console.log(email)
             if (!email) {
                 return res.send([]);
             }
@@ -273,7 +273,7 @@ async function run() {
 
         app.post('/carts', async (req, res) => {
             const item = req.body;
-            console.log(item);
+            // console.log(item);
             const result = await cartCollection.insertOne(item);
             res.send(result);
         })
@@ -286,6 +286,15 @@ async function run() {
         })
 
 
+        app.get("/carts/:id", async (req, res) => {
+            const id = req.params.id
+            console.log(id)
+            const filter = { _id: new ObjectId(id) }
+            const data = await cartCollection.findOne(filter)
+            res.send(data)
+        })
+
+
 
 
 
@@ -294,7 +303,7 @@ async function run() {
         app.post("/create-payment-intent", verifyJWT, async (req, res) => {
             const { price } = req.body;
             const amount = parseInt(price * 100);
-            console.log(price, amount)
+            // console.log(price, amount)
 
             // Create a PaymentIntent with the order amount and currency
             const paymentIntent = await stripe.paymentIntents.create({
